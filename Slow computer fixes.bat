@@ -26,9 +26,10 @@ goto check_Permissions
     echo --------------------------------------------------------------------------------
     echo.
     echo Options:
-    echo  1. Fix 100% disk usage (stop DiagTrack)
-    echo  2. Clear temporary files
-    echo  3. Start Disk Cleanup
+    echo  1. Fix 100 percent disk usage (stop DiagTrack)
+    echo  2. Stop Windows Update (fix slow Internet and/or computer)
+    echo  3. Clear temporary files
+    echo  4. Start Disk Cleanup
     echo  X. Exit
     echo.
     echo.
@@ -40,22 +41,46 @@ goto check_Permissions
     echo.
     echo.
     echo.
-    choice /C 123X /M "Selection: "
+    choice /C 1234X /M "Selection: "
            if %errorlevel% EQU 0 ( goto :mainmenu
     ) else if %errorlevel% EQU 1 ( goto :dtstop
-    ) else if %errorlevel% EQU 2 ( goto :deltemp
-    ) else if %errorlevel% EQU 3 ( goto :diskclean
-    ) else if %errorlevel% EQU 4 ( goto :EOF )
+    ) else if %errorlevel% EQU 2 ( goto :updstop
+    ) else if %errorlevel% EQU 3 ( goto :deltemp
+    ) else if %errorlevel% EQU 4 ( goto :diskclean
+    ) else if %errorlevel% EQU 5 ( goto :EOF )
+
+:updstop
+    @title Slow Computer Fixes: Stop Windows Update
+    cls
+    color 3f
+    echo --------------------------------------------------------------------------------
+    echo (                            Stop Windows Update                               )
+    echo --------------------------------------------------------------------------------
+    echo.
+    echo Stopping services (this might take a minute)...
+    net stop bits
+    net stop wuauserv
+    net stop appidsvc
+    net stop cryptsvc
+    echo Finished!
+    echo.
+    echo What next?
+    echo 1. Go to the main menu
+    echo X. Quit
+    choice /C 1X /M "Selection: "
+           if %errorlevel% EQU 0 ( goto :mainmenu
+    ) else if %errorlevel% EQU 1 ( goto :mainmenu
+    ) else if %errorlevel% EQU 2 ( goto :EOF)
 
 :deltemp
     @title Slow Computer Fixes: Deleting Temporary Files
     cls
     color 3f
     echo --------------------------------------------------------------------------------
-    echo (                               Delete Temporary Files                                  )
+    echo (                          Delete Temporary Files                              )
     echo --------------------------------------------------------------------------------
     echo.
-    echo Deleting system terporary files...
+    echo Deleting system temporary files...
     echo.
     del "%SystemDrive%\Windows\Temp\" /Q > "%userprofile%\AppData\Local\Temp\deltemp.log"
     echo System temporary files deleted!
@@ -75,7 +100,7 @@ goto check_Permissions
     echo.
     echo Temporary files have been deleted!
     echo.
-    echo "What would you like to do next?"
+    echo What would you like to do next?
     echo  1. View the log
     echo  M. Go to the main menu
     echo  X. Quit
@@ -93,7 +118,7 @@ goto check_Permissions
     echo --------------------------------------------------------------------------------      echo.
     copy "%userprofile%\AppData\Local\Temp\deltemp.log" con
     echo.
-    echo "What would you like to do next?"
+    echo What would you like to do next?
     echo  M. Go to the main menu
     echo  X. Quit
     choice /C MX /M "Selection: "
@@ -113,7 +138,7 @@ goto check_Permissions
     echo (                               Stop DiagTrack                                 )
     echo -------------------------------------------------------------------------------- 
     echo.
-    net start diagtrack > nul
+    net start diagtrack > nul 2>&1
     net stop diagtrack
     echo.
     echo.
@@ -123,7 +148,7 @@ goto check_Permissions
     echo.
     echo.
     echo.
-    echo "What next?"
+    echo What next?
     echo  M. Main menu
     echo  X. Quit
     choice /C MX /M "Selection: "
@@ -151,7 +176,7 @@ goto check_Permissions
     echo.
     echo.
     echo.
-    echo "What next?"
+    echo What next?
     echo  M. Main menu.
     echo  X. Quit
     choice /C MX /M "Selection: "
